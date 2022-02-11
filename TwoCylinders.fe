@@ -47,7 +47,7 @@ vertices
 21 0 -rad_center height-sqrt(rad_upper^2 - (rad_center*cos(cyl_angle))^2) up_disp_con
 22 rad_center 0 height-sqrt(rad_upper^2 - (rad_center*sin(cyl_angle))^2) up_disp_con
 23 0 rad_center height-sqrt(rad_upper^2 - (rad_center*cos(cyl_angle))^2) up_disp_con
-24 -rad_center 0 height-sqrt(rad_upper^2 - (rad_center*sin(cyl_angle))^2)up_disp_con
+24 -rad_center 0 height-sqrt(rad_upper^2 - (rad_center*sin(cyl_angle))^2) up_disp_con
 
 edges
 // Lower cylinder display
