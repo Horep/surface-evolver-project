@@ -1,10 +1,10 @@
 parameter height = 3
-parameter cyl_angle = 0.1
+parameter cyl_angle = 0.7
 parameter cyl_len = 5
 parameter rad_upper = 1
 parameter rad_lower = 1
 parameter rad_center = 0.5
-
+parameter VOL = 1
 #define L_upper sqrt(rad_upper^2 + cyl_len^2)
 #define ang_upper atan(rad_upper/cyl_len)
 // Lower Cylinder - display
@@ -19,35 +19,35 @@ constraint up_disp_con_plane
 formula: x*cos(cyl_angle) + y*sin(cyl_angle) + height*z = 0
 vertices
 // Lower cylinder display
-1 -cyl_len 0 -rad_lower low_disp_con FIXED
-2 -cyl_len rad_lower 0 low_disp_con FIXED
-3 -cyl_len 0 rad_lower low_disp_con FIXED
-4 -cyl_len -rad_lower 0 low_disp_con FIXED
-5  cyl_len -rad_lower 0 low_disp_con FIXED
-6  cyl_len 0 rad_lower low_disp_con FIXED
-7  cyl_len rad_lower 0 low_disp_con FIXED
-8  cyl_len 0 -rad_lower low_disp_con FIXED
+1 -cyl_len 0 -rad_lower constraint low_disp_con FIXED
+2 -cyl_len rad_lower 0 constraint low_disp_con FIXED
+3 -cyl_len 0 rad_lower constraint low_disp_con FIXED
+4 -cyl_len -rad_lower 0 constraint low_disp_con FIXED
+5  cyl_len -rad_lower 0 constraint low_disp_con FIXED
+6  cyl_len 0 rad_lower constraint low_disp_con FIXED
+7  cyl_len rad_lower 0 constraint low_disp_con FIXED
+8  cyl_len 0 -rad_lower constraint low_disp_con FIXED
 
 // Upper cylinder display
 
-9 -cyl_len*cos(cyl_angle) -cyl_len*sin(cyl_angle) height-rad_upper up_disp_con FIXED
-10 -L_upper*cos(cyl_angle+ang_upper) L_upper*sin(cyl_angle+ang_upper) height up_disp_con FIXED
-11 -cyl_len*cos(cyl_angle) -cyl_len*sin(cyl_angle) height+rad_upper up_disp_con FIXED
-12 -L_upper*cos(cyl_angle+ang_upper) -L_upper*sin(cyl_angle+ang_upper) height up_disp_con FIXED
-13 L_upper*cos(cyl_angle+ang_upper) -L_upper*sin(cyl_angle+ang_upper) height up_disp_con FIXED
-14 cyl_len*cos(cyl_angle) cyl_len*sin(cyl_angle) height+rad_upper up_disp_con FIXED
-15 L_upper*cos(cyl_angle+ang_upper) L_upper*sin(cyl_angle+ang_upper) height up_disp_con FIXED
-16 cyl_len*cos(cyl_angle) cyl_len*sin(cyl_angle) height-rad_upper up_disp_con FIXED
+9 -cyl_len*cos(cyl_angle) -cyl_len*sin(cyl_angle) height-rad_upper constraint up_disp_con FIXED
+10 -L_upper*cos(cyl_angle+ang_upper) L_upper*sin(cyl_angle+ang_upper) height constraint up_disp_con FIXED
+11 -cyl_len*cos(cyl_angle) -cyl_len*sin(cyl_angle) height+rad_upper constraint up_disp_con FIXED
+12 -L_upper*cos(cyl_angle+ang_upper) -L_upper*sin(cyl_angle+ang_upper) height constraint up_disp_con FIXED
+13 L_upper*cos(cyl_angle+ang_upper) -L_upper*sin(cyl_angle+ang_upper) height constraint up_disp_con FIXED
+14 cyl_len*cos(cyl_angle) cyl_len*sin(cyl_angle) height+rad_upper constraint up_disp_con FIXED
+15 L_upper*cos(cyl_angle+ang_upper) L_upper*sin(cyl_angle+ang_upper) height constraint up_disp_con FIXED
+16 cyl_len*cos(cyl_angle) cyl_len*sin(cyl_angle) height-rad_upper constraint up_disp_con FIXED
 
 // Droplet
-17 -rad_center 0 rad_lower low_disp_con
-18 0 rad_center sqrt(rad_lower^2 -rad_center) low_disp_con
-19 rad_center 0 rad_lower low_disp_con
-20 0 -rad_center sqrt(rad_lower^2 -rad_center^2) low_disp_con
-21 0 -rad_center height-sqrt(rad_upper^2 - (rad_center*cos(cyl_angle))^2) up_disp_con
-22 rad_center 0 height-sqrt(rad_upper^2 - (rad_center*sin(cyl_angle))^2) up_disp_con
-23 0 rad_center height-sqrt(rad_upper^2 - (rad_center*cos(cyl_angle))^2) up_disp_con
-24 -rad_center 0 height-sqrt(rad_upper^2 - (rad_center*sin(cyl_angle))^2) up_disp_con
+17 -rad_center 0 rad_lower constraint low_disp_con
+18 0 rad_center sqrt(rad_lower^2 -rad_center) constraint low_disp_con
+19 rad_center 0 rad_lower constraint low_disp_con
+20 0 -rad_center sqrt(rad_lower^2 -rad_center^2) constraint low_disp_con
+21 0 -rad_center height-sqrt(rad_upper^2 - (rad_center*cos(cyl_angle))^2) constraint up_disp_con
+22 rad_center 0 height-sqrt(rad_upper^2 - (rad_center*sin(cyl_angle))^2) constraint up_disp_con
+23 0 rad_center height-sqrt(rad_upper^2 - (rad_center*cos(cyl_angle))^2) constraint up_disp_con
+24 -rad_center 0 height-sqrt(rad_upper^2 - (rad_center*sin(cyl_angle))^2) constraint up_disp_con
 
 edges
 // Lower cylinder display
@@ -65,32 +65,32 @@ edges
 12 5 8 constraint low_disp_con FIXED
 
 // Upper cylinder display
-13 9 10 up_disp_con FIXED
-14 10 11 up_disp_con FIXED
-15 11 12 up_disp_con FIXED
-16 12 9 up_disp_con FIXED
-17 9 16 up_disp_con FIXED
-18 16 15 up_disp_con FIXED
-19 15 10 up_disp_con FIXED
-20 15 14 up_disp_con FIXED
-21 13 14 up_disp_con FIXED
-22 16 13 up_disp_con FIXED
-23 12 13 up_disp_con FIXED
-24 14 11 up_disp_con FIXED
+13 9 10 constraint up_disp_con FIXED
+14 10 11 constraint up_disp_con FIXED
+15 11 12 constraint up_disp_con FIXED
+16 12 9 constraint up_disp_con FIXED
+17 9 16 constraint up_disp_con FIXED
+18 16 15 constraint up_disp_con FIXED
+19 15 10 constraint up_disp_con FIXED
+20 15 14 constraint up_disp_con FIXED
+21 13 14 constraint up_disp_con FIXED
+22 16 13 constraint up_disp_con FIXED
+23 12 13 constraint up_disp_con FIXED
+24 14 11 constraint up_disp_con FIXED
 
 // Droplet
-25 17 18 low_disp_con
-26 18 19 low_disp_con
-27 19 20 low_disp_con
-28 20 17 low_disp_con
+25 17 18 constraint low_disp_con FIXED
+26 18 19 constraint low_disp_con FIXED
+27 19 20 constraint low_disp_con FIXED
+28 20 17 constraint low_disp_con FIXED
 29 21 20
 30 24 17
 31 18 23
 32 19 22
-33 23 24 up_disp_con
-34 23 22 up_disp_con
-35 22 21 up_disp_con
-36 21 24 up_disp_con
+33 23 24 constraint up_disp_con FIXED
+34 23 22 constraint up_disp_con FIXED
+35 22 21 constraint up_disp_con FIXED
+36 21 24 constraint up_disp_con FIXED
 
 faces
 // Lower cylinder display
@@ -106,12 +106,17 @@ faces
 8 19 -13 17 18 constraint up_disp_con density 0 FIXED// right bot
 
 // Droplet
-9 31 33 30 25
-10 29 28 -30 -36
-11 27 -29 -35 -32
-12 32 -34 -31 26
-13 -27 -26 -25 -28
-14 34 35 36 -33
+9 31 33 30 25 // front right
+10 29 28 -30 -36 // front left
+11 27 -29 -35 -32 // back left
+12 32 -34 -31 26 // back right
+13 -27 -26 -25 -28 constraint low_disp_con FIXED// bot
+14 34 35 36 -33 constraint up_disp_con FIXED// top
 
 bodies
-1 9 10 11 12 13 14 volume 1
+1 9 10 11 12 13 14 volume VOL
+
+read
+calc := {
+ g 100; r; g 500; r; u; g 500;
+}
