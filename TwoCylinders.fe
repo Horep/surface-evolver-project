@@ -1,5 +1,5 @@
 parameter height = 4
-parameter cyl_angle = 0.7
+parameter cyl_angle = 0
 parameter cyl_len = 5
 parameter rad_upper = 1
 parameter rad_lower = 1
@@ -7,6 +7,7 @@ parameter rad_center = 0.5
 parameter VOL = 1
 #define L_upper sqrt(rad_upper^2 + cyl_len^2)
 #define ang_upper atan(rad_upper/cyl_len)
+#define DENS 1
 // Lower Cylinder - display
 constraint low_disp_con
 formula: y^2 + z^2 = 1
@@ -116,7 +117,7 @@ faces
 14 34 35 36 -33 constraint up_disp_con FIXED// top
 
 bodies
-1 9 10 11 12 13 14 volume VOL
+1 9 10 11 12 13 14 volume VOL density DENS
 
 read
 calc := {
