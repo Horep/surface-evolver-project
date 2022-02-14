@@ -120,6 +120,7 @@ faces
 bodies
 1 9 10 11 12 13 14 volume VOL density DENS
 
+// Other script commands to use during runtime
 read
 calc := {
  g 100; r; g 500; r; u; g 500;
