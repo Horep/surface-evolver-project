@@ -5,17 +5,17 @@ parameter rad_lower = 0.5
 parameter rad_center = 0.2
 parameter VOL = 1
 // The height should be greater than rad_lower+rad_lower
-parameter height = 3
+parameter height = 2
 #define L_upper sqrt(rad_upper^2 + cyl_len^2)
 #define ang_upper atan(rad_upper/cyl_len)
 #define DENS 1
 // Lower Cylinder - display
 constraint low_disp_con
-formula: y^2 + z^2 = 1
+formula: y^2 + z^2 = rad_lower^2
 
 // Upper Cylinder - display
 constraint up_disp_con
-formula: (height-z)^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2 = 1
+formula: (height-z)^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2 = rad_upper^2
 
 constraint up_disp_con_plane_back
 formula: x*cos(cyl_angle) + y*sin(cyl_angle) = cyl_len
@@ -44,14 +44,14 @@ vertices
 16 cyl_len*cos(cyl_angle) cyl_len*sin(cyl_angle) height-rad_upper constraint up_disp_con up_disp_con_plane_front FIXED
 
 // Droplet
-17 -rad_center 0 rad_lower constraint low_disp_con 
-18 0 rad_center sqrt(rad_lower^2 -rad_center^2) constraint low_disp_con
-19 rad_center 0 rad_lower constraint low_disp_con
-20 0 -rad_center sqrt(rad_lower^2 -rad_center^2) constraint low_disp_con
-21 0 -rad_center height-sqrt(rad_upper^2 - (rad_center*cos(cyl_angle))^2) constraint up_disp_con
-22 rad_center 0 height-sqrt(rad_upper^2 - (rad_center*sin(cyl_angle))^2) constraint up_disp_con
-23 0 rad_center height-sqrt(rad_upper^2 - (rad_center*cos(cyl_angle))^2) constraint up_disp_con
-24 -rad_center 0 height-sqrt(rad_upper^2 - (rad_center*sin(cyl_angle))^2) constraint up_disp_con
+17 -rad_center 0 rad_lower
+18 0 rad_center sqrt(rad_lower^2 -rad_center^2)
+19 rad_center 0 rad_lower
+20 0 -rad_center sqrt(rad_lower^2 -rad_center^2)
+21 0 -rad_center height-sqrt(rad_upper^2 - (rad_center*cos(cyl_angle))^2)
+22 rad_center 0 height-sqrt(rad_upper^2 - (rad_center*sin(cyl_angle))^2)
+23 0 rad_center height-sqrt(rad_upper^2 - (rad_center*cos(cyl_angle))^2)
+24 -rad_center 0 height-sqrt(rad_upper^2 - (rad_center*sin(cyl_angle))^2)
 
 edges
 // Lower cylinder display
