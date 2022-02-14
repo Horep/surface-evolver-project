@@ -4,7 +4,7 @@ parameter rad_upper = 0.5
 parameter rad_lower = 0.5
 parameter rad_center = 0.2
 parameter VOL = 1
-// The height should be greater than rad_lower+rad_lower
+// The height should be greater than rad_lower+rad_upper
 parameter height = 2
 #define L_upper sqrt(rad_upper^2 + cyl_len^2)
 #define ang_upper atan(rad_upper/cyl_len)
