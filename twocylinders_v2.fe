@@ -28,6 +28,7 @@ formula: x*cos(cyl_angle) + y*sin(cyl_angle) = cyl_len
 
 constraint up_disp_con_plane_front
 formula: x*cos(cyl_angle) + y*sin(cyl_angle) = -cyl_len
+
 vertices
 // Lower cylinder display
 1 -cyl_len 0 -rad_lower constraint low_disp_con FIXED
@@ -139,19 +140,6 @@ ref_cylinders := {
   unset edge no_refine;
   set edge no_refine where fixed;
 }
-
-
-
-ref2 := { 
-  //unfix facets; unfix edges; 
-  edge_divide ref_length; 
-  refine facets ff where not on_constraint low_disp_con && ff.area > ref_area; 
-  refine facets ff where not on_constraint up_disp_con && ff.area > ref_area; 
-  refine facets ff where sum(ff.vertices vv where on_constraint low_disp_con,1) < 3 && ff.area > ref_area;
-  refine facets ff where sum(ff.vertices vv where on_constraint up_disp_con,1) <3 && ff.area > ref_area;
-  t 0.1;
-  u;
-};
 
 do_cols := {
 foreach facet ff where on_constraint low_disp_con do set ff color red;
