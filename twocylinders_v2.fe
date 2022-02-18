@@ -1,4 +1,5 @@
-parameter cyl_angle = 0
+// Angle should be between 0 and pi/2
+parameter cyl_angle = 0.25*pi
 parameter cyl_len = 5
 parameter rad_upper = 0.5
 parameter rad_lower = 0.5
@@ -121,8 +122,8 @@ faces
 10 29 28 -30 -36 // front left
 11 27 -29 -35 -32 // back left
 12 32 -34 -31 26 // back right
-13 -27 -26 -25 -28 constraint low_disp_con FIXED// bot
-14 34 35 36 -33 constraint up_disp_con FIXED// top
+13 -27 -26 -25 -28 constraint low_disp_con// bot
+14 34 35 36 -33 constraint up_disp_con// top
 
 bodies
 1 9 10 11 12 13 14 volume VOL density DENS
@@ -132,7 +133,7 @@ read
 
 // change from linear mode to quadratic
 
-// Making nicely refined spheres and then freezing them so they don't refine more.
+// Making nicely refined cylinders and then freezing them so they don't refine more.
 ref_cylinders := {
   set edge no_refine where not fixed;
   r; t 0.1; u; r;
