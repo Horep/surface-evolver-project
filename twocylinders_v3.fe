@@ -1,5 +1,5 @@
 // Angle between cylinder normals, should be between 0 and pi/2
-parameter cyl_angle = 0*pi/2
+parameter cyl_angle = 0
 // Length of cylinders in 3d space
 parameter cyl_len = 5
 // Radius of the upper, lower and droplet cylinders
@@ -9,14 +9,14 @@ parameter rad_center = 0.2
 // Volume of the droplet
 parameter VOL = 0.1
 // Contact angle, in degrees because why not
-parameter cont_angle = 30
+parameter cont_angle = 90
 PARAMETER min_area = 0.002 
 PARAMETER min_lent = 0.05
 PARAMETER ref_length = 10*min_lent
 PARAMETER ref_area = 25*min_area
 
 // The height should be greater than rad_lower+rad_upper
-parameter height = 2
+parameter height = 1.5
 #define L_upper sqrt(rad_upper^2 + cyl_len^2)
 #define ang_upper atan(rad_upper/cyl_len)
 #define DENS 1
@@ -151,8 +151,8 @@ faces
 10 29 28 -30 -36 // front left
 11 27 -29 -35 -32 // back left
 12 32 -34 -31 26 // back right
-13 -27 -26 -25 -28 constraint low_energy tension 0// bot
-14 34 35 36 -33 constraint up_energy tension 0// top
+13 -27 -26 -25 -28 constraint low_disp_con tension 0// bot
+14 34 35 36 -33 constraint up_disp_con tension 0// top
 
 bodies
 1 -9 -10 -11 -12 -13 -14 volume VOL density DENS
@@ -180,6 +180,7 @@ set body[1].facets color cyan;
 calc := {
 ref_cylinders;
 do_cols;
+r 2;
  g 100; M 2; r; g 500; r; u; g 500;
 }
 
