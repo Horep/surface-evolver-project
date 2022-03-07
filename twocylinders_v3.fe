@@ -1,5 +1,6 @@
 // Angle between cylinder normals, should be between 0 and pi/2
-parameter cyl_angle = 0.1*pi/2
+parameter cyl_angle_degree = 60
+#define cyl_angle (cyl_angle_degree*pi/180)
 // Length of cylinders in 3d space
 parameter cyl_len = 5
 // Radius of the upper, lower and droplet cylinders
@@ -34,17 +35,17 @@ formula: x*cos(cyl_angle) + y*sin(cyl_angle) = cyl_len
 
 constraint up_disp_con_plane_front
 formula: x*cos(cyl_angle) + y*sin(cyl_angle) = -cyl_len
-
+// Define common terms for the upper energy
 #define denom_u (z^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2) // upper cylinder denominator
-#define common_u ((-tension_val*rad_upper/2)/denom_u) // common front of w for upper
+#define common_u ((tension_val*rad_upper/2)/denom_u) // common front of w for upper
 
 // Upper cylinder with energy
 constraint up_energy
 formula: z^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2 = rad_upper^2
 energy:
-e1: common_u*(-2*y*z*(sin(cyl_angle))^2 - x*z*sin(2*cyl_angle))
-e2: common_u*(2*x*z*(cos(cyl_angle))^2 + y*z*sin(2*cyl_angle))
-e3: common_u*(-2*x*y*cos(2*cyl_angle)+ (x^2 - y^2)*sin(2*cyl_angle))
+e1: -common_u*(-2*y*z*(sin(cyl_angle))^2 - x*z*sin(2*cyl_angle))
+e2: -common_u*(2*x*z*(cos(cyl_angle))^2 + y*z*sin(2*cyl_angle))
+e3: -common_u*(-2*x*y*cos(2*cyl_angle)+ (x^2 - y^2)*sin(2*cyl_angle))
 
 #define logthing (log(height^2 / ((height + z)^2 + y^2))) // the weird log thing
 #define arctanthing (atan((z*(height+z)+y^2)/(height*y)) - atan(z/y)) // the arctangent component
