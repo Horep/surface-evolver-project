@@ -35,7 +35,7 @@ formula: x*cos(cyl_angle) + y*sin(cyl_angle) = cyl_len
 constraint up_disp_con_plane_front
 formula: x*cos(cyl_angle) + y*sin(cyl_angle) = -cyl_len
 
-#define denom_u (z^2 + (y*cos(cyl_angle) - x*cos(cyl_angle))^2) // upper cylinder denominator
+#define denom_u (z^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2) // upper cylinder denominator
 #define common_u ((-tension_val*rad_upper/2)/denom_u) // common front of w for upper
 
 // Upper cylinder with energy
@@ -47,7 +47,7 @@ e2: -common_u*(2*x*z*(cos(cyl_angle))^2 + y*z*sin(2*cyl_angle))
 e3: -common_u*(-2*x*y*cos(2*cyl_angle)+ (x^2 - y^2)*sin(2*cyl_angle))
 
 #define logthing (log(height^2 / ((height + z)^2 + y^2))) // the weird log thing
-#define arctanthing (atan(y/(height+z))) // the arctangent component
+#define arctanthing (atan((z*(height+z)+y^2)/(height*y)) - atan(z/y)) // the arctangent component
 #define common_L (tension_val*rad_lower*height / (y^2 + z^2)^2) // prefactor of square brackets
 #define common_L_front (tension_val*rad_lower / (y^2 + z^2)) // prefactor of thing before square brackets
 
@@ -55,7 +55,7 @@ e3: -common_u*(-2*x*y*cos(2*cyl_angle)+ (x^2 - y^2)*sin(2*cyl_angle))
 constraint low_energy
 formula: y^2 + (height+z)^2 = rad_lower^2
 energy:
-e1: common_L*z * (((z^2 - 2*y*z - y^2)/2)*logthing - (z^2 + 2*y*z -y^2)*arctanthing)
+e1: common_L*z * (0.5*(z^2 - 2*y*z - y^2)*logthing - (z^2 + 2*y*z -y^2)*arctanthing)
 e2: -common_L_front*x*z - (common_L*x/2)*((z^2 - y^2)*logthing - 4*y*z*arctanthing) 
 e3: common_L_front*x*y + common_L*x*(y*z*logthing + (z^2 - y^2)*arctanthing)
 
