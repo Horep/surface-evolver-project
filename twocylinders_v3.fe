@@ -1,5 +1,5 @@
 // Angle between cylinder normals, should be between 0 and pi/2
-parameter cyl_angle_degree = 90
+parameter cyl_angle_degree = 0
 #define cyl_angle (cyl_angle_degree*pi/180)
 // Length of cylinders in 3d space
 parameter cyl_len = 5
@@ -24,11 +24,11 @@ parameter height = 1.5
 #define tension_val (-cos(cont_angle*pi/180)) 
 // Lower Cylinder - display
 constraint low_disp_con
-formula: y^2 + (height+z)^2 = rad_lower^2
+formula: sqrt(y^2 + (height+z)^2) = rad_lower
 
 // Upper Cylinder - display
 constraint up_disp_con
-formula: z^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2 = rad_upper^2
+formula: sqrt(z^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2) = rad_upper
 // Keep rotation cylinder ends flat
 constraint up_disp_con_plane_back
 formula: x*cos(cyl_angle) + y*sin(cyl_angle) = cyl_len
@@ -41,7 +41,7 @@ formula: x*cos(cyl_angle) + y*sin(cyl_angle) = -cyl_len
 
 // Upper cylinder with energy
 constraint up_energy
-formula: z^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2 = rad_upper^2
+formula: sqrt(z^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2) = rad_upper
 energy:
 e1: -common_u*(-2*y*z*(sin(cyl_angle))^2 - x*z*sin(2*cyl_angle))
 e2: -common_u*(2*x*z*(cos(cyl_angle))^2 + y*z*sin(2*cyl_angle))
@@ -54,7 +54,7 @@ e3: -common_u*(-2*x*y*cos(2*cyl_angle)+ (x^2 - y^2)*sin(2*cyl_angle))
 
 // Lower cylinder with energy
 constraint low_energy
-formula: y^2 + (height+z)^2 = rad_lower^2
+formula: sqrt(y^2 + (height+z)^2)= rad_lower
 energy:
 e1: common_L*z * (0.5*(z^2 - 2*y*z - y^2)*logthing - (z^2 + 2*y*z -y^2)*arctanthing)
 e2: -common_L_front*x*z - (common_L*x/2)*((z^2 - y^2)*logthing - 4*y*z*arctanthing) 
