@@ -195,6 +195,7 @@ set body[1].facets color cyan;
 }
 
 calc := {
+G 0;
 ref_cylinders;
 do_cols;
 r 2;
