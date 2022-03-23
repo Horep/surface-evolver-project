@@ -10,7 +10,7 @@ parameter rad_center = 0.2
 // Volume of the droplet
 parameter VOL = 0.1
 // Contact angle, in degrees because why not
-parameter cont_angle = 90
+parameter cont_angle = 60
 PARAMETER min_area = 0.002
 PARAMETER min_lent = 0.05
 PARAMETER ref_length = 10*min_lent
@@ -18,10 +18,8 @@ PARAMETER ref_area = 25*min_area
 
 // The height should be greater than rad_lower+rad_upper
 parameter height = 1.5
-#define L_upper sqrt(rad_upper^2 + cyl_len^2)
-#define ang_upper atan(rad_upper/cyl_len)
 #define DENS 1
-#define tension_val (-cos(cont_angle*pi/180)) 
+#define tension_val (cos(cont_angle*pi/180)) 
 
 // Lower Cylinder - display
 constraint low_disp_con
