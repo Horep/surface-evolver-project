@@ -1,0 +1,229 @@
+// Angle between cylinder normals, should be between 0 and pi/2
+parameter cyl_angle_degree = 0
+#define cyl_angle (cyl_angle_degree*pi/180)
+// Length of cylinders in 3d space
+parameter cyl_len = 5
+// Radius of the upper, lower and droplet cylinders
+parameter rad_upper = 0.5
+parameter rad_lower = 0.5
+parameter rad_center = 0.2
+// Volume of the droplet
+parameter VOL = 0.1
+// Contact angle, in degrees because why not
+parameter cont_angle = 80
+PARAMETER min_area = 0.002
+PARAMETER min_lent = 0.05
+PARAMETER ref_length = 10*min_lent
+PARAMETER ref_area = 25*min_area
+
+// The height should be greater than rad_lower+rad_upper
+parameter height = 1.5
+#define DENS 1
+#define tension_val (-cos(cont_angle*pi/180)) 
+
+// Lower Cylinder - display
+constraint low_disp_con
+formula: sqrt(y^2 + (height+z)^2) = rad_lower
+
+// Upper Cylinder - display
+constraint up_disp_con
+formula: sqrt(z^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2) = rad_upper
+
+// Keep rotation cylinder ends flat
+constraint up_disp_con_plane_back
+formula: x*cos(cyl_angle) + y*sin(cyl_angle) = cyl_len
+
+constraint up_disp_con_plane_front
+formula: x*cos(cyl_angle) + y*sin(cyl_angle) = -cyl_len
+
+// Define common/long terms for the upper energy
+#define denom_u (z^2 + (x*(sin(cyl_angle))^2 - y*sin(2*cyl_angle)/2)^2 + (y*(cos(cyl_angle))^2 - x*sin(2*cyl_angle)/2)^2) // upper cylinder denominator
+#define common_u ((tension_val*rad_upper/2)/denom_u) // common front of w for upper
+
+#define uproot (sqrt(rad_upper^2 - (y*cos(cyl_angle) - x*sin(cyl_angle))^2))
+// Upper cylinder with energy
+constraint up_energy
+formula: sqrt(z^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2) = rad_upper
+energy:
+e1: common_u*(-2*y*z*(sin(cyl_angle))^2 - x*z*sin(2*cyl_angle))
+e2: -common_u*(2*x*z*(cos(cyl_angle))^2 + y*z*sin(2*cyl_angle))
+e3: common_u*(-2*x*y*cos(2*cyl_angle)+ (x^2 - y^2)*sin(2*cyl_angle))
+
+content:
+c1: -0.5*((rad_upper^2 / cos(cyl_angle)) * atan((y*cos(cyl_angle) - x*sin(cyl_angle))/uproot) + (y-x*tan(cyl_angle))*uproot)
+c2: 0
+c3: 0
+
+
+// Lower cylinder with energy
+constraint low_energy
+formula: sqrt(y^2 + (height+z)^2)= rad_lower
+energy:
+e1: 0
+e2: -tension_val*rad_lower*x*(z+height) / (y^2+(z+height)^2) 
+e3: tension_val*rad_lower*x*y / (y^2+(z+height)^2)
+
+content:
+c1: 0
+c2: height*x - x*sqrt(rad_lower^2 - y^2)
+c3: 0
+
+PARAMETER tan_num =tan(cyl_angle/2)
+vertices
+// Lower cylinder display
+1 -cyl_len 0 -rad_lower-height constraint low_disp_con FIXED
+2 -cyl_len rad_lower -height constraint low_disp_con FIXED
+3 -cyl_len 0 rad_lower-height constraint low_disp_con FIXED
+4 -cyl_len -rad_lower -height constraint low_disp_con FIXED
+5  cyl_len -rad_lower -height constraint low_disp_con FIXED
+6  cyl_len 0 rad_lower-height constraint low_disp_con FIXED
+7  cyl_len rad_lower -height constraint low_disp_con FIXED
+8  cyl_len 0 -rad_lower-height constraint low_disp_con FIXED
+
+// Upper cylinder display
+9 -cyl_len*cos(cyl_angle) -cyl_len*sin(cyl_angle) -rad_upper constraint up_disp_con up_disp_con_plane_back FIXED
+10 (-(-cyl_len)*tan_num^2 - 2*(rad_upper)*tan_num + (-cyl_len))/(tan_num^2 + 1) (2*(-cyl_len)*tan_num - (rad_upper)*tan_num^2 + (rad_upper))/(tan_num^2 + 1) 0 constraint up_disp_con up_disp_con_plane_back FIXED
+11 -cyl_len*cos(cyl_angle) -cyl_len*sin(cyl_angle) rad_upper constraint up_disp_con up_disp_con_plane_back FIXED
+12 (-(-cyl_len)*tan_num^2 - 2*(-rad_upper)*tan_num + (-cyl_len))/(tan_num^2 + 1) (2*(-cyl_len)*tan_num - (-rad_upper)*tan_num^2 + (-rad_upper))/(tan_num^2 + 1) 0 constraint up_disp_con up_disp_con_plane_back FIXED
+13 (-(cyl_len)*tan_num^2 - 2*(-rad_upper)*tan_num + (cyl_len))/(tan_num^2 + 1) (2*(cyl_len)*tan_num - (-rad_upper)*tan_num^2 + (-rad_upper))/(tan_num^2 + 1) 0 constraint up_disp_con up_disp_con_plane_front FIXED
+14 cyl_len*cos(cyl_angle) cyl_len*sin(cyl_angle) rad_upper constraint up_disp_con up_disp_con_plane_front FIXED
+15 (-(cyl_len)*tan_num^2 - 2*(rad_upper)*tan_num + (cyl_len))/(tan_num^2 + 1) (2*(cyl_len)*tan_num - (rad_upper)*tan_num^2 + (rad_upper))/(tan_num^2 + 1) 0 constraint up_disp_con up_disp_con_plane_front FIXED
+16 cyl_len*cos(cyl_angle) cyl_len*sin(cyl_angle) -rad_upper constraint up_disp_con up_disp_con_plane_front FIXED
+
+
+#define RC (rad_center)
+#define RU (rad_upper)
+#define RL (rad_lower)
+#define h (height)
+#define z_low_corn (-h+sqrt(RL^2 - (RC^2) / 2))
+#define z_low_y (-h+sqrt(RL^2 - RC^2))
+// Droplet
+17 -RC 0 -h+RL constraint low_energy
+18 -RC/sqrt(2) RC/sqrt(2) z_low_corn constraint low_energy
+19 0 RC z_low_y constraint low_energy
+20 RC/sqrt(2) RC/sqrt(2) z_low_corn constraint low_energy
+21 RC 0 -h+RL constraint low_energy
+22 RC/sqrt(2) -RC/sqrt(2) z_low_corn constraint low_energy
+23 0 -RC z_low_y constraint low_energy
+24 -RC/sqrt(2) -RC/sqrt(2) z_low_corn constraint low_energy
+25 -RC 0 -sqrt(RU^2 - ((0)*cos(cyl_angle) -(-RC)*sin(cyl_angle))^2) constraint up_energy
+26 -RC/sqrt(2) RC/sqrt(2) -sqrt(RU^2 - ((RC/sqrt(2))*cos(cyl_angle) -(-RC/sqrt(2))*sin(cyl_angle))^2) constraint up_energy
+27 0 RC -sqrt(RU^2 - ((RC)*cos(cyl_angle) -(0)*sin(cyl_angle))^2) constraint up_energy
+28 RC/sqrt(2) RC/sqrt(2) -sqrt(RU^2 - ((RC/sqrt(2))*cos(cyl_angle) -(RC/sqrt(2))*sin(cyl_angle))^2) constraint up_energy
+29 RC 0 -sqrt(RU^2 - ((0)*cos(cyl_angle) -(RC)*sin(cyl_angle))^2) constraint up_energy
+30 RC/sqrt(2) -RC/sqrt(2) -sqrt(RU^2 - ((-RC/sqrt(2))*cos(cyl_angle) -(RC/sqrt(2))*sin(cyl_angle))^2) constraint up_energy
+31 0 -RC -sqrt(RU^2 - ((-RC)*cos(cyl_angle) -(0)*sin(cyl_angle))^2) constraint up_energy
+32 -RC/sqrt(2) -RC/sqrt(2) -sqrt(RU^2 - ((-RC/sqrt(2))*cos(cyl_angle) -(-RC/sqrt(2))*sin(cyl_angle))^2) constraint up_energy
+
+edges
+// Lower cylinder display
+1  1 2 constraint low_disp_con FIXED
+2  2 3 constraint low_disp_con FIXED
+3  3 4 constraint low_disp_con FIXED
+4  4 1 constraint low_disp_con FIXED
+5  1 8 constraint low_disp_con FIXED
+6  2 7 constraint low_disp_con FIXED
+7  3 6 constraint low_disp_con FIXED
+8  4 5 constraint low_disp_con FIXED
+9  8 7 constraint low_disp_con FIXED
+10 7 6 constraint low_disp_con FIXED
+11 6 5 constraint low_disp_con FIXED
+12 5 8 constraint low_disp_con FIXED
+
+// Upper cylinder display
+13 9 10 constraint up_disp_con up_disp_con_plane_back FIXED
+14 10 11 constraint up_disp_con up_disp_con_plane_back FIXED
+15 11 12 constraint up_disp_con up_disp_con_plane_back FIXED
+16 12 9 constraint up_disp_con up_disp_con_plane_back FIXED
+17 9 16 constraint up_disp_con FIXED
+18 16 15 constraint up_disp_con FIXED
+19 15 10 constraint up_disp_con FIXED
+20 15 14 constraint up_disp_con FIXED
+21 13 14 constraint up_disp_con up_disp_con_plane_front FIXED
+22 16 13 constraint up_disp_con up_disp_con_plane_front FIXED
+23 12 13 constraint up_disp_con up_disp_con_plane_front FIXED
+24 14 11 constraint up_disp_con up_disp_con_plane_front FIXED
+
+// Droplet
+25 17 24 constraint low_energy
+26 24 23 constraint low_energy
+27 23 22 constraint low_energy
+28 22 21 constraint low_energy
+29 21 20 constraint low_energy
+30 20 19 constraint low_energy
+31 19 18 constraint low_energy
+32 18 17 constraint low_energy
+33 25 17
+34 32 25 constraint up_energy
+35 24 32
+36 31 32 constraint up_energy
+37 31 23
+38 30 31 constraint up_energy
+39 22 30
+40 29 30 constraint up_energy
+41 29 21
+42 28 29 constraint up_energy
+43 20 28
+44 27 28 constraint up_energy
+45 27 19
+46 26 27 constraint up_energy
+47 18 26
+48 25 26 constraint up_energy
+
+faces
+// Lower cylinder display
+1 9 -6 -1 5 constraint low_disp_con density 0 FIXED// right bottom
+2 10 -7 -2 6 constraint low_disp_con density 0 FIXED// right top
+3 -3 7 11 -8 constraint low_disp_con density 0 FIXED// left top
+4 8 12 -5 -4 constraint low_disp_con density 0 FIXED// left bottom
+
+// Upper cylinder display
+5 20 24 -14 -19 constraint up_disp_con density 0 FIXED// right top
+6 -15 -24 -21 -23 constraint up_disp_con density 0 FIXED// left top
+7 23 -22 -17 -16 constraint up_disp_con density 0 FIXED// left bot
+8 19 -13 17 18 constraint up_disp_con density 0 FIXED// right bot
+
+// Droplet
+9 47 -48 33 -32
+10 -45 -46 -47 -31
+11 43 -44 45 -30
+12 -41 -42 -43 -29
+13 41 -28 39 -40
+14 -39 -27 -37 -38
+15 35 -36 37 -26
+16 -33 -34 -35 -25
+//13 -27 -26 -25 -28 constraint low_disp_con tension 0// bot
+//14 34 35 36 -33 constraint up_disp_con tension 0// top
+
+bodies
+1 9 10 11 12 13 14 15 16 volume VOL density DENS
+
+// Other script commands to use during runtime
+read
+
+// change from linear mode to quadratic
+
+// Making nicely refined cylinders and then freezing them so they don't refine more.
+ref_cylinders := {
+  set edge no_refine where not fixed;
+  r; t 0.1; u; r;
+  set facet no_refine where fixed;
+  unset edge no_refine;
+  set edge no_refine where fixed;
+}
+
+do_cols := {
+foreach facet ff where on_constraint low_disp_con do set ff color red;
+foreach facet ff where on_constraint up_disp_con do set ff color red;	
+set body[1].facets color cyan;
+}
+
+calc := {
+G 0;
+ref_cylinders;
+do_cols;
+r 2;
+ g 100; M 2; r; g 500; r; u; g 500;
+}
+
+showq;
