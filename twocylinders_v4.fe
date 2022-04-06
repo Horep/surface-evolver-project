@@ -45,8 +45,8 @@ formula: x*cos(cyl_angle) + y*sin(cyl_angle) = -cyl_len
 constraint up_energy
 formula: sqrt(z^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2) = rad_upper
 energy:
-e1: common_u*(-2*y*z*(sin(cyl_angle))^2 - x*z*sin(2*cyl_angle))
-e2: -common_u*(2*x*z*(cos(cyl_angle))^2 + y*z*sin(2*cyl_angle))
+e1: common_u*(-2*y*z*(sin(cyl_angle))^2 - x*z*sin(2*cyl_angle)) -(G*DENS*y/2)*(y^2 * (cos(cyl_angle))^2 /3 + (x*sin(cyl_angle))^2)
+e2: -common_u*(2*x*z*(cos(cyl_angle))^2 + y*z*sin(2*cyl_angle)) -(G*DENS*x/2)*(rad_upper^2 + x*y*sin(2*cyl_angle)/2)
 e3: common_u*(-2*x*y*cos(2*cyl_angle)+ (x^2 - y^2)*sin(2*cyl_angle))
 
 content:
@@ -60,7 +60,7 @@ constraint low_energy
 formula: sqrt(y^2 + (height+z)^2)= rad_lower
 energy:
 e1: 0
-e2: -tension_val*rad_lower*x*(z+height) / (y^2+(z+height)^2) 
+e2: -tension_val*rad_lower*x*(z+height) / (y^2+(z+height)^2) -(G*DENS*x/2)*(-height + sqrt(rad_lower^2 - y^2))
 e3: tension_val*rad_lower*x*y / (y^2+(z+height)^2)
 
 content:
@@ -219,7 +219,7 @@ set body[1].facets color cyan;
 }
 
 calc := {
-G 0;
+G -0.1;
 ref_cylinders;
 do_cols;
 r 2;
