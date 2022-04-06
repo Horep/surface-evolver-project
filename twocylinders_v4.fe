@@ -15,7 +15,7 @@ PARAMETER min_area = 0.002
 PARAMETER min_lent = 0.05
 PARAMETER ref_length = 10*min_lent
 PARAMETER ref_area = 25*min_area
-
+PARAMETER GZ = 1
 // The height should be greater than rad_lower+rad_upper
 parameter height = 1.5
 #define DENS 1
@@ -45,8 +45,8 @@ formula: x*cos(cyl_angle) + y*sin(cyl_angle) = -cyl_len
 constraint up_energy
 formula: sqrt(z^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2) = rad_upper
 energy:
-e1: common_u*(-2*y*z*(sin(cyl_angle))^2 - x*z*sin(2*cyl_angle)) -(G*DENS*y/2)*(y^2 * (cos(cyl_angle))^2 /3 + (x*sin(cyl_angle))^2)
-e2: -common_u*(2*x*z*(cos(cyl_angle))^2 + y*z*sin(2*cyl_angle)) -(G*DENS*x/2)*(rad_upper^2 + x*y*sin(2*cyl_angle)/2)
+e1: common_u*(-2*y*z*(sin(cyl_angle))^2 - x*z*sin(2*cyl_angle)) -(GZ*DENS*y/2)*(y^2 * (cos(cyl_angle))^2 /3 + (x*sin(cyl_angle))^2)
+e2: -common_u*(2*x*z*(cos(cyl_angle))^2 + y*z*sin(2*cyl_angle)) -(GZ*DENS*x/2)*(rad_upper^2 + x*y*sin(2*cyl_angle)/2)
 e3: common_u*(-2*x*y*cos(2*cyl_angle)+ (x^2 - y^2)*sin(2*cyl_angle))
 
 content:
@@ -60,13 +60,22 @@ constraint low_energy
 formula: sqrt(y^2 + (height+z)^2)= rad_lower
 energy:
 e1: 0
-e2: -tension_val*rad_lower*x*(z+height) / (y^2+(z+height)^2) -(G*DENS*x/2)*(-height + sqrt(rad_lower^2 - y^2))
+e2: -tension_val*rad_lower*x*(z+height) / (y^2+(z+height)^2) +(GZ*DENS*x/2)*(-height + sqrt(rad_lower^2 - y^2))
 e3: tension_val*rad_lower*x*y / (y^2+(z+height)^2)
 
 content:
 c1: 0
 c2: height*x - x*sqrt(rad_lower^2 - y^2)
 c3: 0
+
+// named quantity for arbitrary direction gravity on facets
+quantity arb_grav energy method facet_vector_integral global
+vector_integrand:
+q1: 0
+q2: 0
+q3: -GZ*DENS*(z^2) / 2
+//
+
 
 PARAMETER tan_num =tan(cyl_angle/2)
 vertices
@@ -219,7 +228,7 @@ set body[1].facets color cyan;
 }
 
 calc := {
-G -0.1;
+G 0;
 ref_cylinders;
 do_cols;
 r 2;
@@ -242,6 +251,6 @@ doangleiteration := {
 while cyl_angle_degree < 90 do { gogo;
 giv_ang;
 giv_energy;
-cyl_angle_degree:=cyl_angle_degree+0.5}}
+cyl_angle_degree:=cyl_angle_degree+10}}
 
 showq;
