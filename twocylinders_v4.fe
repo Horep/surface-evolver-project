@@ -10,7 +10,7 @@ parameter rad_center = 0.2
 // Volume of the droplet
 parameter VOL = 0.1
 // Contact angle, in degrees because why not
-parameter cont_angle = 90
+parameter cont_angle = 100
 PARAMETER min_area = 0.002
 PARAMETER min_lent = 0.05
 PARAMETER ref_length = 10*min_lent
@@ -19,7 +19,7 @@ PARAMETER GZ = -1
 // The height should be greater than rad_lower+rad_upper
 parameter height = 1.5
 #define DENS 1
-#define tension_val (-cos(cont_angle*pi/180)) 
+#define tension_val (-cos(cont_angle*pi/180))
 
 // Lower Cylinder - display
 constraint low_disp_con
@@ -231,16 +231,23 @@ calc := {
 G 0;
 ref_cylinders;
 do_cols;
+r;
+ g 100; M 2;r; g 500; u; g 100; U; g 100; U; g 100;
+}
+
+calcfine := {
+G 0;
+ref_cylinders;
+do_cols;
 r 2;
  g 100; M 2; r; g 500; r; u; g 100; U; g 100; U; g 100;
 }
 
-
 gogo := {
 //grow droplet:
 {
-g 100; U; g 100; U;
-} 4;
+g 500;
+};
 };
 
 //print angle and energy, change file location to your own
@@ -251,6 +258,6 @@ doangleiteration := {
 while cyl_angle_degree < 90 do { gogo;
 giv_ang;
 giv_energy;
-cyl_angle_degree:=cyl_angle_degree+10}}
+cyl_angle_degree:=cyl_angle_degree+1}}
 
 showq;
