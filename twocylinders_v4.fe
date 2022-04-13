@@ -8,9 +8,9 @@ parameter rad_upper = 0.5
 parameter rad_lower = 0.5
 parameter rad_center = 0.2
 // Volume of the droplet
-parameter VOL = 0.1
+parameter VOL = 0.06
 // Contact angle, in degrees because why not
-parameter cont_angle = 100
+parameter cont_angle = 90
 PARAMETER min_area = 0.002
 PARAMETER min_lent = 0.05
 PARAMETER ref_length = 10*min_lent
@@ -246,10 +246,22 @@ r 2;
 gogo := {
 //grow droplet:
 {
-g 500;
+g 400;
 };
 };
+gogoconjugate := {g 200; U; g 200; U}
+// Shrinks droplet by 0.01
+shrink := {body[1].target += -0.01; print body[1].target};
 
+
+//Commands to deal with separation of the droplet from one of the cylinders.
+// Use "separateupper" to cut off from the upper cylinder, and "separatelower" to cut off from the lower cylinder. 
+deleteupper := {delete edges where on_constraint up_energy}
+deletelower := {delete edges where on_constraint low_energy}
+unsetupper := {unset vertices constraint up_energy; unset edges constraint up_energy}
+unsetlower := {unset vertices constraint low_energy; unset edges constraint low_energy}
+separateupper := {deleteupper; unsetupper}
+separatelower := {deletelower; unsetlower}
 //print angle and energy, change file location to your own
 giv_ang := {printf " %f,",cyl_angle_degree >> "C:/Users/Horep/Documents/Extra Study PDF Files/Surface Evolver Project/Surface Evolver Files/garbagefiles/angles.txt"}
 giv_energy := {printf "%10.20g,",total_energy >> "C:/Users/Horep/Documents/Extra Study PDF Files/Surface Evolver Project/Surface Evolver Files/garbagefiles/energies.txt"}
@@ -259,5 +271,6 @@ while cyl_angle_degree < 90 do { gogo;
 giv_ang;
 giv_energy;
 cyl_angle_degree:=cyl_angle_degree+1}}
+
 
 showq;
