@@ -1,5 +1,5 @@
 // Angle between cylinder normals, should be between 0 and pi/2
-parameter cyl_angle_degree = 0
+parameter cyl_angle_degree = 60
 #define cyl_angle (cyl_angle_degree*pi/180)
 // Length of cylinders in 3d space
 parameter cyl_len = 5
@@ -8,9 +8,10 @@ parameter rad_upper = 0.5
 parameter rad_lower = 0.5
 parameter rad_center = 0.2
 // Volume of the droplet
-parameter VOL = 0.06
+parameter VOL = 0.2
+parameter volstep = 0.01
 // Contact angle, in degrees because why not
-parameter cont_angle = 90
+parameter cont_angle = 60
 PARAMETER min_area = 0.002
 PARAMETER min_lent = 0.05
 PARAMETER ref_length = 10*min_lent
@@ -249,11 +250,11 @@ gogo := {
 g 400;
 };
 };
-gogoconjugate := {g 200; U; g 200; U}
+gogoconjugate := {{g 200; U; g 200; U} 20}
 // Shrinks droplet by 0.01
-shrink := {body[1].target += -0.01; print body[1].target};
-
-
+shrink := {body[1].target += -volstep; print body[1].target};
+shrinkgoconj := {shrink; gogoconjugate}
+calcgoconj := {calc; gogoconjugate}
 //Commands to deal with separation of the droplet from one of the cylinders.
 // Use "separateupper" to cut off from the upper cylinder, and "separatelower" to cut off from the lower cylinder. 
 deleteupper := {delete edges where on_constraint up_energy}
