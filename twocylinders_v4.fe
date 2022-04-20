@@ -1,5 +1,5 @@
 // Angle between cylinder normals, should be between 0 and pi/2
-parameter cyl_angle_degree = 30
+parameter cyl_angle_degree = 0
 #define cyl_angle (cyl_angle_degree*pi/180)
 // Length of cylinders in 3d space
 parameter cyl_len = 5
@@ -8,15 +8,15 @@ parameter rad_upper = 0.5
 parameter rad_lower = 0.5
 parameter rad_center = 0.2
 // Volume of the droplet
-parameter VOL = 0.4
+parameter VOL = 0.1
 parameter volstep = 0.01
 // Contact angle, in degrees because why not
-parameter cont_angle = 60
+parameter cont_angle = 100
 PARAMETER min_area = 0.002
 PARAMETER min_lent = 0.05
 PARAMETER ref_length = 10*min_lent
 PARAMETER ref_area = 25*min_area
-PARAMETER GZ = 0
+PARAMETER GZ = -1
 // The height should be greater than rad_lower+rad_upper
 parameter height = 1.5
 #define DENS 1
