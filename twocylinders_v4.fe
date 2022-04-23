@@ -18,7 +18,7 @@ PARAMETER ref_length = 10*min_lent
 PARAMETER ref_area = 25*min_area
 PARAMETER GZ = -1
 // The height should be greater than rad_lower+rad_upper
-parameter height = 1.5
+parameter height = rad_upper + rad_lower + 0.5
 #define DENS 1
 #define tension_val (-cos(cont_angle*pi/180))
 
