@@ -1,22 +1,22 @@
 // Angle between cylinder normals, should be between 0 and pi/2
-parameter cyl_angle_degree = 45
+parameter cyl_angle_degree = 0
 #define cyl_angle (cyl_angle_degree*pi/180)
 // Length of cylinders in 3d space
 parameter cyl_len = 5
 // Radius of the upper, lower and droplet cylinders
-parameter rad_upper = 10
-parameter rad_lower = 10
+parameter rad_upper = 0.5
+parameter rad_lower = 0.5
 parameter rad_center = 0.2
 // Volume of the droplet
 parameter VOL = 0.1
 parameter volstep = 0.01
 // Contact angle, in degrees because why not
-parameter cont_angle = 150
+parameter cont_angle = 90
 PARAMETER min_area = 0.002
 PARAMETER min_lent = 0.05
 PARAMETER ref_length = 10*min_lent
 PARAMETER ref_area = 25*min_area
-PARAMETER GZ = -0
+PARAMETER GZ = -1
 // The height should be greater than rad_lower+rad_upper
 parameter height = rad_upper + rad_lower + 0.5
 #define DENS 1
@@ -235,25 +235,24 @@ do_cols;
 r; {g 10; V; u; } 5; M 2;{g 10; V; u; } 5; r; {g 10; V; u; } 5; u; {g 10; V; u; } 5; U; {g 10; V; u; } 5; U; {g 10; V; u; } 5;
 }
 
-calcfine := {
-G 0;
-ref_cylinders;
-do_cols;
-r 2;
- g 100; M 2; r; g 500; r; u; g 100; U; g 100; U; g 100;
-}
-
 gogo := {
 //grow droplet:
 {
 g 400;
 };
 };
-gogoconjugate := {{g 200; U; g 200; U} 20}
+gogoconjugate := {{g 200; U; g 200; U} 5}
 // Shrinks droplet by 0.01
 shrink := {body[1].target += -volstep; print body[1].target};
 shrinkgoconj := {shrink; gogoconjugate}
 calcgoconj := {calc; gogoconjugate}
+// Automated shrinking
+auto_shrink :={
+do {shrinkgoconj} while sum(edges where on_constraint low_energy,length) > min_lent and sum(edges where on_constraint up_energy,length) > min_lent;
+if sum(edges where on_constraint low_energy,length) < min_lent then {separatelower;separatelower;g 100;U g 100};
+if sum(edges where on_constraint up_energy,length) < min_lent then {separateupper;separateupper;g 100;U g 100};
+print body[1].target;
+}
 //Commands to deal with separation of the droplet from one of the cylinders.
 // Use "separateupper" to cut off from the upper cylinder, and "separatelower" to cut off from the lower cylinder. 
 deleteupper := {delete edges where on_constraint up_energy}
