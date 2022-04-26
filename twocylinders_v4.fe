@@ -1,5 +1,5 @@
 // Angle between cylinder normals, should be between 0 and pi/2
-parameter cyl_angle_degree = 0
+parameter cyl_angle_degree = 89
 #define cyl_angle (cyl_angle_degree*pi/180)
 // Length of cylinders in 3d space
 parameter cyl_len = 5
@@ -8,10 +8,10 @@ parameter rad_upper = 0.5
 parameter rad_lower = 0.5
 parameter rad_center = 0.2
 // Volume of the droplet
-parameter VOL = 0.1
-parameter volstep = 0.01
+parameter VOL = 0.08
+parameter volstep = 0.0005
 // Contact angle, in degrees because why not
-parameter cont_angle = 90
+parameter cont_angle = 120
 PARAMETER min_area = 0.002
 PARAMETER min_lent = 0.05
 PARAMETER ref_length = 10*min_lent
@@ -241,18 +241,12 @@ gogo := {
 g 400;
 };
 };
-gogoconjugate := {{g 200; U; g 200; U} 5}
+gogoconjugate := {{g 200; U; g 200; U; V 5} 3}
 // Shrinks droplet by 0.01
 shrink := {body[1].target += -volstep; print body[1].target};
 shrinkgoconj := {shrink; gogoconjugate}
 calcgoconj := {calc; gogoconjugate}
-// Automated shrinking
-auto_shrink :={
-do {shrinkgoconj} while sum(edges where on_constraint low_energy,length) > min_lent and sum(edges where on_constraint up_energy,length) > min_lent;
-if sum(edges where on_constraint low_energy,length) < min_lent then {separatelower;separatelower;g 100;U g 100};
-if sum(edges where on_constraint up_energy,length) < min_lent then {separateupper;separateupper;g 100;U g 100};
-print body[1].target;
-}
+
 //Commands to deal with separation of the droplet from one of the cylinders.
 // Use "separateupper" to cut off from the upper cylinder, and "separatelower" to cut off from the lower cylinder. 
 deleteupper := {delete edges where on_constraint up_energy}
@@ -261,6 +255,14 @@ unsetupper := {unset vertices constraint up_energy; unset edges constraint up_en
 unsetlower := {unset vertices constraint low_energy; unset edges constraint low_energy}
 separateupper := {deleteupper; unsetupper}
 separatelower := {deletelower; unsetlower}
+
+// Automated shrinking
+auto_shrink :={
+do {shrinkgoconj} while sum(edges where on_constraint low_energy,length) > 4*min_lent and sum(edges where on_constraint up_energy,length) > 4*min_lent;
+if sum(edges where on_constraint low_energy,length) < 4*min_lent then {separatelower;separatelower;g 100; U; g 100;V 5;g 100; U; g 100};
+if sum(edges where on_constraint up_energy,length) < 4*min_lent then {separateupper;separateupper;g 100; U; g 100;V 5;g 100; U; g 100};
+print body[1].target;
+}
 //print angle and energy, change file location to your own
 giv_ang := {printf " %f,",cyl_angle_degree >> "C:/Users/Horep/Documents/Extra Study PDF Files/Surface Evolver Project/Surface Evolver Files/garbagefiles/angles.txt"}
 giv_energy := {printf "%10.20g,",total_energy >> "C:/Users/Horep/Documents/Extra Study PDF Files/Surface Evolver Project/Surface Evolver Files/garbagefiles/energies.txt"}
@@ -271,5 +273,11 @@ giv_ang;
 giv_energy;
 cyl_angle_degree:=cyl_angle_degree+1}}
 
+check_width:=
+{
+cyl_angle:=cyl_angle_degree*pi/180;
+width_upper := max(vertices vv where on_constraint up_energy,vv.x*cos(cyl_angle)-vv.y*sin(cyl_angle))-min(vertices vv where on_constraint up_energy,vv.x*cos(cyl_angle)-vv.y*sin(cyl_angle));
+width_lower := max(vertices vv where on_constraint low_energy,vv.x)-min(vertices vv where on_constraint low_energy,vv.x);
+};
 
 showq;
