@@ -276,7 +276,7 @@ cyl_angle_degree:=cyl_angle_degree+1}}
 check_width:=
 {
 cyl_angle:=cyl_angle_degree*pi/180;
-width_upper := max(vertices vv where on_constraint up_energy,vv.x*cos(cyl_angle)-vv.y*sin(cyl_angle))-min(vertices vv where on_constraint up_energy,vv.x*cos(cyl_angle)-vv.y*sin(cyl_angle));
+width_upper := max(vertices vv where on_constraint up_energy,vv.x*cos(cyl_angle)+vv.y*sin(cyl_angle))-min(vertices vv where on_constraint up_energy,vv.x*cos(cyl_angle)+vv.y*sin(cyl_angle));
 width_lower := max(vertices vv where on_constraint low_energy,vv.x)-min(vertices vv where on_constraint low_energy,vv.x);
 };
 
