@@ -18,13 +18,13 @@ PARAMETER min_lent = 0.05
 PARAMETER ref_length = 10*min_lent
 PARAMETER ref_area = 25*min_area
 // Strength of gravity
-PARAMETER GZ = -980
+PARAMETER GZ = -1
 // The height should be greater than rad_lower+rad_upper
 parameter height = rad_upper + rad_lower + 0.5
 // density of the fluid
 #define DENS 1
 // the surface tension of the liquid-air interface
-PARAMETER TENS =72
+PARAMETER TENS =1
 // surface tension of liquid-solid interface, uses contact angle
 #define tension_val (-cos(cont_angle*pi/180)*TENS)
 
