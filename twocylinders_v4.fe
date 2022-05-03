@@ -1,5 +1,5 @@
 // Angle between cylinder normals, should be between 0 and pi/2
-parameter cyl_angle_degree = 89
+parameter cyl_angle_degree = 0
 #define cyl_angle (cyl_angle_degree*pi/180)
 // Length of cylinders in 3d space
 parameter cyl_len = 5
@@ -8,19 +8,20 @@ parameter rad_upper = 0.5
 parameter rad_lower = 0.5
 parameter rad_center = 0.2
 // Volume of the droplet
-parameter VOL = 0.08
+parameter VOL = 0.1
 parameter volstep = 0.0005
 // Contact angle, in degrees because why not
-parameter cont_angle = 120
+parameter cont_angle = 90
 PARAMETER min_area = 0.002
 PARAMETER min_lent = 0.05
 PARAMETER ref_length = 10*min_lent
 PARAMETER ref_area = 25*min_area
-PARAMETER GZ = -1
+PARAMETER GZ = -980
 // The height should be greater than rad_lower+rad_upper
-parameter height = rad_upper + rad_lower + 0.5
+parameter height = rad_upper + rad_lower + 0.1
 #define DENS 1
-#define tension_val (-cos(cont_angle*pi/180))
+PARAMETER TENS 72
+#define tension_val (-cos(cont_angle*pi/180)*TENS)
 
 // Lower Cylinder - display
 constraint low_disp_con
@@ -194,14 +195,14 @@ faces
 8 19 -13 17 18 constraint up_disp_con density 0 FIXED// right bot
 
 // Droplet
-9 47 -48 33 -32
-10 -45 -46 -47 -31
-11 43 -44 45 -30
-12 -41 -42 -43 -29
-13 41 -28 39 -40
-14 -39 -27 -37 -38
-15 35 -36 37 -26
-16 -33 -34 -35 -25
+9 47 -48 33 -32 density TENS
+10 -45 -46 -47 -31 density TENS
+11 43 -44 45 -30 density TENS
+12 -41 -42 -43 -29 density TENS
+13 41 -28 39 -40 density TENS
+14 -39 -27 -37 -38 density TENS
+15 35 -36 37 -26 density TENS
+16 -33 -34 -35 -25 density TENS
 //13 -27 -26 -25 -28 constraint low_disp_con tension 0// bot
 //14 34 35 36 -33 constraint up_disp_con tension 0// top
 
@@ -278,6 +279,10 @@ check_width:=
 cyl_angle:=cyl_angle_degree*pi/180;
 width_upper := max(vertices vv where on_constraint up_energy,vv.x*cos(cyl_angle)+vv.y*sin(cyl_angle))-min(vertices vv where on_constraint up_energy,vv.x*cos(cyl_angle)+vv.y*sin(cyl_angle));
 width_lower := max(vertices vv where on_constraint low_energy,vv.x)-min(vertices vv where on_constraint low_energy,vv.x);
-};
+print "lower width";
+print width_lower;
+print "upper width";
+print width_upper
+}
 
 showq;
