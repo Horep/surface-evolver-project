@@ -11,7 +11,7 @@ parameter rad_center = 0.2
 parameter VOL = 0.1
 parameter volstep = 0.0005
 // Contact angle, in degrees because why not
-parameter cont_angle = 90
+parameter cont_angle = 100
 // Some reference values
 PARAMETER min_area = 0.002
 PARAMETER min_lent = 0.05
@@ -55,7 +55,7 @@ formula: sqrt(z^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2) = rad_upper
 energy:
 e1: -common_u*(-2*y*z*(sin(cyl_angle))^2 - x*z*sin(2*cyl_angle)) +(GZ*DENS*y/2)*(y^2 * (cos(cyl_angle))^2 /3 + (x*sin(cyl_angle))^2)
 e2: -common_u*(2*x*z*(cos(cyl_angle))^2 + y*z*sin(2*cyl_angle)) +(GZ*DENS*x/2)*(rad_upper^2 + x*y*sin(2*cyl_angle)/2)
-e3: common_u*(-2*x*y*cos(2*cyl_angle)+ (x^2 - y^2)*sin(2*cyl_angle))
+e3: -common_u*(-2*x*y*cos(2*cyl_angle)+ (x^2 - y^2)*sin(2*cyl_angle))
 // volume content integral, doesn't work with cyl_angle=90
 content:
 c1: -0.5*((rad_upper^2 / cos(cyl_angle)) * atan((y*cos(cyl_angle) - x*sin(cyl_angle))/uproot) + (y-x*tan(cyl_angle))*uproot)
@@ -241,7 +241,7 @@ calc := {
 G 0;
 ref_cylinders;
 do_cols;
-r; {g 50; V; u; } 5; M 2;{g 50; V; u; } 5; r; {g 50; V; u; } 5; u; {g 50; V; u; } 5; U; {g 50; V; u; } 5; U; {g 50; V; u; } 5;
+r; {g 50; V; u; } 5; M 2;{g 10; V; u; } 5; r; {g 10; V; u; } 5; u; {g 10; V; u; } 5; U; {g 10; V; u; } 5; U; {g 10; V; u; } 5;
 }
 // dead command
 gogo := {
