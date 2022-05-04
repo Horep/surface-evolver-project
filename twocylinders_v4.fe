@@ -215,7 +215,9 @@ faces
 bodies
 1 -9 -10 -11 -12 -13 -14 -15 -16 volume VOL density DENS
 
+// COMMANDS:
 // Other script commands to use during runtime
+// Type these into the surface evolver console
 read
 
 // change from linear mode to quadratic
@@ -234,7 +236,7 @@ foreach facet ff where on_constraint low_disp_con do set ff color red;
 foreach facet ff where on_constraint up_disp_con do set ff color red;	
 set body[1].facets color cyan;
 }
-// run this to calculate the minimal surface
+// run this to calculate the minimal surface - You should pretty much always run this first
 calc := {
 G 0;
 ref_cylinders;
@@ -295,5 +297,12 @@ print width_lower;
 print "upper width";
 print width_upper
 }
+// Removes the display cylinders, leaving only the droplet. Useful for visualisation.
+remove_cylinders :=
+{
+dissolve facets where fixed;
+dissolve edges where valence ==0;
+dissolve vertices where valence ==0;
+};
 
 set background white; showq;
