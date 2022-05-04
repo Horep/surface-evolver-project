@@ -11,7 +11,7 @@ parameter rad_center = 0.2
 parameter VOL = 0.1
 parameter volstep = 0.0005
 // Contact angle, in degrees because why not
-parameter cont_angle = 100
+parameter cont_angle = 45
 // Some reference values
 PARAMETER min_area = 0.002
 PARAMETER min_lent = 0.05
@@ -53,7 +53,7 @@ constraint up_energy
 formula: sqrt(z^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2) = rad_upper
 // Describes contact angle term (first term) and gravitational (second term, if there is one)
 energy:
-e1: -common_u*(-2*y*z*(sin(cyl_angle))^2 - x*z*sin(2*cyl_angle)) +(GZ*DENS*y/2)*(y^2 * (cos(cyl_angle))^2 /3 + (x*sin(cyl_angle))^2)
+e1: -common_u*(-2*y*z*(sin(cyl_angle))^2 - x*z*sin(2*cyl_angle)) -(GZ*DENS*y/2)*(y^2 * (cos(cyl_angle))^2 /3 + (x*sin(cyl_angle))^2)
 e2: -common_u*(2*x*z*(cos(cyl_angle))^2 + y*z*sin(2*cyl_angle)) +(GZ*DENS*x/2)*(rad_upper^2 + x*y*sin(2*cyl_angle)/2)
 e3: -common_u*(-2*x*y*cos(2*cyl_angle)+ (x^2 - y^2)*sin(2*cyl_angle))
 // volume content integral, doesn't work with cyl_angle=90
@@ -69,7 +69,7 @@ formula: sqrt(y^2 + (height+z)^2)= rad_lower
 // Describes contact angle term (first term) and gravitational (second term, if there is one)
 energy:
 e1: 0
-e2: -tension_val*rad_lower*x*(z+height) / (y^2+(z+height)^2) +(GZ*DENS*x/2)*(-height + sqrt(rad_lower^2 - y^2))
+e2: -tension_val*rad_lower*x*(z+height) / (y^2+(z+height)^2) -(GZ*DENS*x/2)*(-height + sqrt(rad_lower^2 - y^2))
 e3: tension_val*rad_lower*x*y / (y^2+(z+height)^2)
 // volume content integral, doesn't work with cyl_angle=90
 content:
@@ -82,7 +82,7 @@ quantity arb_grav energy method facet_vector_integral global
 vector_integrand:
 q1: 0
 q2: 0
-q3: -GZ*DENS*(z^2) / 2
+q3: GZ*DENS*(z^2) / 2
 //
 
 
