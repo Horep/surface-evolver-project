@@ -18,3 +18,5 @@ To shrink the droplet until it detaches, use code "auto_shrink".
 To detach manually, use "separatelower" or "separateupper" to detach from the respective cylinder.
 
 In the "Python Scripts" folder there are scripts related to plotting data retrieved from the Surface Evolver model. The data is located within the scripts already, and the code needs only be executed.
+
+To simulate something like water, set TENS=72, GZ = -980. This will be in cgs units. Then set appropriate sizes for other variables, such as rad_upper, rad_lower, and the height.
