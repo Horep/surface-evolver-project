@@ -11,7 +11,7 @@ parameter rad_center = 0.2
 parameter VOL = 0.1
 parameter volstep = 0.0005
 // Contact angle, in degrees because why not
-parameter cont_angle = 45
+parameter cont_angle = 60
 // Some reference values
 PARAMETER min_area = 0.002
 PARAMETER min_lent = 0.05
