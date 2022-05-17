@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-
 def magphase(sinm,cosm):
     mag = np.sqrt(sinm**2 + cosm**2)
     phi = np.arctan2(sinm/mag, -cosm/mag)*180/np.pi
@@ -11,14 +10,14 @@ r_U = 0.5
 rinv = 1/r_U
 
 angle = np.array([0, 15, 30, 45, 60, 75, 89])
-lower80 = rinv*np.array([0.507249114509187,0.507101953958448,0.506781822434329,0.506355040177250,0.505934767046276,0.505629605526488,0.505534549838011])
-upper80 = rinv*np.array([0.387743704335652,0.386965887397995,0.386382234940210,0.385819833820649,0.384299272112938,0.383718304795563,0.383803277494628])
+lower80 = rinv*np.array([0.496846223623357,0.496897076012737,0.496803015820278,0.496156726448476,0.494894972843156,0.493556726393311,0.492975827144551])
+upper80 = rinv*np.array([0.455554632219788,0.452997682236272,0.448921933991356,0.446522793028445,0.446718232547225,0.449347714906706,0.451203884755881])
 
-lower90 = rinv*np.array([0.548036922553003,0.547844525326969,0.547374777861100,0.546744724359917,0.546122283260744,0.545674031404370,0.545525142724897])
-upper90 = rinv*np.array([0.417552997261284,0.416646595661471,0.415845633445687,0.415000140614035,0.413122310311690,0.412330199107599,0.412363689757834])
+lower90 = rinv*np.array([0.531901592794667,0.531957204208543,0.531836829235028,0.531038643269432,0.529493313602457,0.527858585138676,0.527150453387627])
+upper90 = rinv*np.array([0.489436153661044,0.486558345910561,0.481686571098061,0.478625735049728,0.478927066898116,0.481929103700076,0.483967292544033])
 
-lower100 = rinv*np.array([0.591149508900952,0.590919761933186,0.590323682676273,0.589519774934674,0.588728479381457,0.588158817438974,0.587957161675631])
-upper100 = rinv*np.array([0.441896521528020,0.440939872332147,0.439911679806059,0.438685215294136,0.436538808940269,0.435523168883089,0.435431129587071])
+lower100 = rinv*np.array([0.567332081925342,0.567418121607390,0.567318974600174,0.566403290972710,0.564568072626077,0.562602589057438,0.561746011520796])
+upper100 = rinv*np.array([0.522690756730912,0.519451591987126,0.513597818903230,0.509695388756183,0.510308640187366,0.513920180608159,0.516190598061241])
 
 sinx = np.sin(2*angle*np.pi/180)
 cosx = np.cos(2*angle*np.pi/180)
@@ -38,20 +37,35 @@ mag90U, phi90U = magphase(sinm90U,cosm90U)
 sinm100U, cosm100U, c100U = np.linalg.lstsq(A1, upper100, rcond=None)[0]
 mag100U, phi100U = magphase(sinm100U,cosm100U)
 
+x1 = np.linspace(0, 90, 1000)
+y80L = c80L + sinm80L*np.sin(2*np.pi*x1/180) + cosm80L*np.cos(2*np.pi*x1/180)
+y90L = c90L + sinm90L*np.sin(2*np.pi*x1/180) + cosm90L*np.cos(2*np.pi*x1/180)
+y100L = c100L + sinm100L*np.sin(2*np.pi*x1/180) + cosm100L*np.cos(2*np.pi*x1/180)
+y80U = c80U + sinm80U*np.sin(2*np.pi*x1/180) + cosm80U*np.cos(2*np.pi*x1/180)
+y90U = c90U + sinm90U*np.sin(2*np.pi*x1/180) + cosm90U*np.cos(2*np.pi*x1/180)
+y100U = c100U + sinm100U*np.sin(2*np.pi*x1/180) + cosm100U*np.cos(2*np.pi*x1/180)
+
+plt.plot(x1,y80L, linestyle='--', color='blue')
+plt.plot(x1,y90L, linestyle='--', color='orange')
+plt.plot(x1,y100L, linestyle='--', color='green')
+plt.plot(x1,y80U, linestyle='--', color='blue')
+plt.plot(x1,y90U, linestyle='--', color='orange')
+plt.plot(x1,y100U, linestyle='--', color='green')
+
 
 #plt.plot(angle,lower80)
 #plt.plot(angle,lower90)
 #plt.plot(angle,lower100)
 
-plt.plot(angle, lower80, marker="^", linestyle='None', label=r"$\theta_{YL} = 90\degree$ L", color='orange')
-plt.plot(angle, lower90, marker="^", linestyle='None', label=r"$\theta_{YL} = 80\degree$ L", color='blue')
-plt.plot(angle, lower100, marker="^", linestyle='None', label=r"$\theta_{YL} = 100\degree$ L", color='green')
+plt.plot(angle, lower80, marker="v", linestyle='None', label=r"$\theta_{YL} = 80\degree$ L", color='blue')
+plt.plot(angle, lower90, marker="v", linestyle='None', label=r"$\theta_{YL} = 90\degree$ L", color='orange')
+plt.plot(angle, lower100, marker="v", linestyle='None', label=r"$\theta_{YL} = 100\degree$ L", color='green')
 
-plt.plot(angle, upper80, marker="v", linestyle='None', label=r"$\theta_{YL} = 90\degree$ U", color='orange')
-plt.plot(angle, upper90, marker="v", linestyle='None', label=r"$\theta_{YL} = 80\degree$ U", color='blue')
-plt.plot(angle, upper100, marker="v", linestyle='None', label=r"$\theta_{YL} = 100\degree$ U", color='green')
+plt.plot(angle, upper80, marker="^", linestyle='None', label=r"$\theta_{YL} = 80\degree$ U", color='blue')
+plt.plot(angle, upper90, marker="^", linestyle='None', label=r"$\theta_{YL} = 90\degree$ U", color='orange')
+plt.plot(angle, upper100, marker="^", linestyle='None', label=r"$\theta_{YL} = 100\degree$ U", color='green')
 
 plt.ylabel(r"Width/$r_{U}$")
 plt.xlabel(r"Cylinder Angle $(\vartheta\degree)$")
-plt.legend()
+plt.legend(bbox_to_anchor=(1,1))
 plt.savefig("WidthAgainstContactAngle.pdf", bbox_inches='tight', pad_inches=0.0)
