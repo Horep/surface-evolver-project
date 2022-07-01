@@ -1,5 +1,5 @@
 // Angle between cylinder normals, should be between 0 and pi/2
-parameter cyl_angle_degree = 0
+parameter cyl_angle_degree = 30
 #define cyl_angle (cyl_angle_degree*pi/180)
 // Length of cylinders in 3d space
 parameter cyl_len = 5
@@ -8,25 +8,27 @@ parameter rad_upper = 0.5
 parameter rad_lower = 0.5
 parameter rad_center = 0.2
 // Volume of the droplet
-parameter VOL = 0.1
+parameter VOL = 0.08
 parameter volstep = 0.0005
 // Contact angle, in degrees because why not
-parameter cont_angle = 60
+parameter cont_angle_up = 90
+parameter cont_angle_low = 40
 // Some reference values
 PARAMETER min_area = 0.002
 PARAMETER min_lent = 0.05
 PARAMETER ref_length = 10*min_lent
 PARAMETER ref_area = 25*min_area
 // Strength of gravity
-PARAMETER GZ = -1
+PARAMETER GZ = -980
 // The height should be greater than rad_lower+rad_upper
 parameter height = rad_upper + rad_lower + 0.5
 // density of the fluid
 #define DENS 1
 // the surface tension of the liquid-air interface
-PARAMETER TENS =1
+PARAMETER TENS = 72
 // surface tension of liquid-solid interface, uses contact angle
-#define tension_val (-cos(cont_angle*pi/180)*TENS)
+#define tension_val_up (-cos(cont_angle_up*pi/180)*TENS)
+#define tension_val_low (-cos(cont_angle_low*pi/180)*TENS)
 
 // Lower Cylinder - display constraint, lies on cylinder along x-axis with radius rad_lower
 constraint low_disp_con
@@ -45,7 +47,7 @@ formula: x*cos(cyl_angle) + y*sin(cyl_angle) = -cyl_len
 
 // Define common/long terms for the upper energy
 #define denom_u (z^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2) // upper cylinder denominator
-#define common_u ((tension_val*rad_upper/2)/denom_u) // common front of w for upper
+#define common_u ((tension_val_up*rad_upper/2)/denom_u) // common front of w for upper
 
 #define uproot (sqrt(rad_upper^2 - (y*cos(cyl_angle) - x*sin(cyl_angle))^2))
 // Upper cylinder constraint with energy. This defines the upper cylinder's liquid solid interface.
@@ -69,8 +71,8 @@ formula: sqrt(y^2 + (height+z)^2)= rad_lower
 // Describes contact angle term (first term) and gravitational (second term, if there is one)
 energy:
 e1: 0
-e2: -tension_val*rad_lower*x*(z+height) / (y^2+(z+height)^2) -(GZ*DENS*x/2)*(-height + sqrt(rad_lower^2 - y^2))
-e3: tension_val*rad_lower*x*y / (y^2+(z+height)^2)
+e2: -tension_val_low*rad_lower*x*(z+height) / (y^2+(z+height)^2) -(GZ*DENS*x/2)*(-height + sqrt(rad_lower^2 - y^2))
+e3: tension_val_low*rad_lower*x*y / (y^2+(z+height)^2)
 // volume content integral, doesn't work with cyl_angle=90
 content:
 c1: 0
@@ -280,11 +282,12 @@ print body[1].target;
 //print angle and energy, change file location to your own
 giv_ang := {printf " %f,",cyl_angle_degree >> "C:/Users/Horep/Documents/Extra Study PDF Files/Surface Evolver Project/Surface Evolver Files/garbagefiles/angles.txt"}
 giv_energy := {printf "%10.20g,",total_energy >> "C:/Users/Horep/Documents/Extra Study PDF Files/Surface Evolver Project/Surface Evolver Files/garbagefiles/energies.txt"}
+giv_area := {printf "%10.20g,",total_area >> "C:/Users/Horep/Documents/Extra Study PDF Files/Surface Evolver Project/Surface Evolver Files/garbagefiles/area.txt"}
 // changes the angle by some amount, and then evolves, repeats until 90degrees
 doangleiteration := {
-while cyl_angle_degree < 90 do { gogo;
+while cyl_angle_degree < 90 do { gogoconjugate;
 giv_ang;
-giv_energy;
+giv_area;
 cyl_angle_degree:=cyl_angle_degree+1}}
 // outputs the width along the cylinder normal for upper and lower cylinder
 check_width:=
@@ -303,6 +306,7 @@ remove_cylinders :=
 dissolve facets where fixed;
 dissolve edges where valence ==0;
 dissolve vertices where valence ==0;
+print total_area
 };
 
 set background white; showq;
