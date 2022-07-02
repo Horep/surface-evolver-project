@@ -3,7 +3,7 @@ This is a place for me to store some work using Surface Evolver.
 
 This code, "twocylinders" is designed to calculate the minimal droplet surface between two fibers.
 The angle between the two fibers can be changed by rotating the upper cylinder in the x-y plane.
-The contact angle between the fiber and the droplet can be adjusted.
+The contact angle between the fiber and the droplet can be adjusted. NOTE: The contact angle convention used is from the inside of the fluid. When this was originally written the opposite convention was taken.
 The density of the fluid can be changed.
 The initial size of the droplet can also be changed if it is too far from the minimal surface using "rad_center"
 
