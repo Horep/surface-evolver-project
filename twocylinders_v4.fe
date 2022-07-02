@@ -11,8 +11,8 @@ parameter rad_center = 0.2
 parameter VOL = 0.08
 parameter volstep = 0.0005
 // Contact angle, in degrees because why not
-parameter cont_angle_up = 90
-parameter cont_angle_low = 40
+parameter cont_angle_up = 45
+parameter cont_angle_low = 45
 // Some reference values
 PARAMETER min_area = 0.002
 PARAMETER min_lent = 0.05
@@ -27,8 +27,8 @@ parameter height = rad_upper + rad_lower + 0.5
 // the surface tension of the liquid-air interface
 PARAMETER TENS = 72
 // surface tension of liquid-solid interface, uses contact angle
-#define tension_val_up (-cos(cont_angle_up*pi/180)*TENS)
-#define tension_val_low (-cos(cont_angle_low*pi/180)*TENS)
+#define tension_val_up (cos(cont_angle_up*pi/180)*TENS)
+#define tension_val_low (cos(cont_angle_low*pi/180)*TENS)
 
 // Lower Cylinder - display constraint, lies on cylinder along x-axis with radius rad_lower
 constraint low_disp_con
