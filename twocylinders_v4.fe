@@ -4,15 +4,17 @@ parameter cyl_angle_degree = 30
 // Length of cylinders in 3d space
 parameter cyl_len = 5
 // Radius of the upper, lower and droplet cylinders
-parameter rad_upper = 0.5
+parameter rad_upper = 0.45
 parameter rad_lower = 0.5
-parameter rad_center = 0.2
+// This radius must be smaller than rad_lower and rad_upper. A workable value is either the maximum or the average of these.
+parameter rad_center = 0.3
 // Volume of the droplet
 parameter VOL = 0.08
+// Step size for finding detachment from decreasing volume. Smaller is better, but takes considerably longer. Recommend lowering VOL until detachment, and then using this for finer approximation.
 parameter volstep = 0.0005
 // Contact angle, in degrees because why not
-parameter cont_angle_up = 45
-parameter cont_angle_low = 45
+parameter cont_angle_up = 60
+parameter cont_angle_low = 120
 // Some reference values
 PARAMETER min_area = 0.002
 PARAMETER min_lent = 0.05
@@ -53,12 +55,12 @@ formula: x*cos(cyl_angle) + y*sin(cyl_angle) = -cyl_len
 // Upper cylinder constraint with energy. This defines the upper cylinder's liquid solid interface.
 constraint up_energy
 formula: sqrt(z^2 + (y*cos(cyl_angle) - x*sin(cyl_angle))^2) = rad_upper
-// Describes contact angle term (first term) and gravitational (second term, if there is one)
+// Describes contact angle term (first term) and gravitational (second term, if there is one). Each component e1,e2,e3 forms a vector integrand, integrated over the boundary.
 energy:
 e1: -common_u*(-2*y*z*(sin(cyl_angle))^2 - x*z*sin(2*cyl_angle)) -(GZ*DENS*y/2)*(y^2 * (cos(cyl_angle))^2 /3 + (x*sin(cyl_angle))^2)
 e2: -common_u*(2*x*z*(cos(cyl_angle))^2 + y*z*sin(2*cyl_angle)) +(GZ*DENS*x/2)*(rad_upper^2 + x*y*sin(2*cyl_angle)/2)
 e3: -common_u*(-2*x*y*cos(2*cyl_angle)+ (x^2 - y^2)*sin(2*cyl_angle))
-// volume content integral, doesn't work with cyl_angle=90
+// volume content integral, doesn't work with cyl_angle=90. Can simply use 89.9, or 90.1.
 content:
 c1: -0.5*((rad_upper^2 / cos(cyl_angle)) * atan((y*cos(cyl_angle) - x*sin(cyl_angle))/uproot) + (y-x*tan(cyl_angle))*uproot)
 c2: 0
@@ -68,26 +70,26 @@ c3: 0
 // Lower cylinder with energy. This defines the lower cylinder's liquid solid interface.
 constraint low_energy
 formula: sqrt(y^2 + (height+z)^2)= rad_lower
-// Describes contact angle term (first term) and gravitational (second term, if there is one)
+// Describes contact angle term (first term) and gravitational (second term, if there is one). Each component e1,e2,e3 forms a vector integrand, integrated over the boundary.
 energy:
 e1: 0
 e2: -tension_val_low*rad_lower*x*(z+height) / (y^2+(z+height)^2) -(GZ*DENS*x/2)*(-height + sqrt(rad_lower^2 - y^2))
 e3: tension_val_low*rad_lower*x*y / (y^2+(z+height)^2)
-// volume content integral, doesn't work with cyl_angle=90
+// volume content integral
 content:
 c1: 0
 c2: height*x - x*sqrt(rad_lower^2 - y^2)
 c3: 0
 
-// named quantity for arbitrary direction gravity on facets, calculates the gravitational effects on the liquid-air interface
+// named quantity for arbitrary direction gravity on facets, calculates the gravitational effects on the liquid-air interface. Refer to Surface Evolver manual for this wizardry.
 quantity arb_grav energy method facet_vector_integral global
 vector_integrand:
 q1: 0
 q2: 0
 q3: GZ*DENS*(z^2) / 2
 //
-
-
+// The following is a list of vertices, edges and faces. Refer to the vertex images on GitHub. The relevant constraints are applied where needed.
+// useful parameter, bad to calculate multiple times
 PARAMETER tan_num =tan(cyl_angle/2)
 vertices
 // Lower cylinder display - defines geometry
@@ -100,7 +102,7 @@ vertices
 7  cyl_len rad_lower -height constraint low_disp_con FIXED
 8  cyl_len 0 -rad_lower-height constraint low_disp_con FIXED
 
-// Upper cylinder display - defines geometry
+// Upper cylinder display - defines geometry with horrendously long formulae.
 9 -cyl_len*cos(cyl_angle) -cyl_len*sin(cyl_angle) -rad_upper constraint up_disp_con up_disp_con_plane_back FIXED
 10 (-(-cyl_len)*tan_num^2 - 2*(rad_upper)*tan_num + (-cyl_len))/(tan_num^2 + 1) (2*(-cyl_len)*tan_num - (rad_upper)*tan_num^2 + (rad_upper))/(tan_num^2 + 1) 0 constraint up_disp_con up_disp_con_plane_back FIXED
 11 -cyl_len*cos(cyl_angle) -cyl_len*sin(cyl_angle) rad_upper constraint up_disp_con up_disp_con_plane_back FIXED
@@ -214,6 +216,7 @@ faces
 15 35 -36 37 -26 density TENS
 16 -33 -34 -35 -25 density TENS
 
+// Lets SE know this is a fluid.
 bodies
 1 -9 -10 -11 -12 -13 -14 -15 -16 volume VOL density DENS
 
@@ -238,7 +241,7 @@ foreach facet ff where on_constraint low_disp_con do set ff color red;
 foreach facet ff where on_constraint up_disp_con do set ff color red;	
 set body[1].facets color cyan;
 }
-// run this to calculate the minimal surface - You should pretty much always run this first
+// run "calc" to calculate the minimal surface - You should pretty much always run this first
 calc := {
 G 0;
 ref_cylinders;
